@@ -1,0 +1,287 @@
+:root{
+  --paper:#f6f1e7;
+  --ink:#17211f;
+  --teal:#0d5c56;
+  --teal-soft:#dcebe7;
+  --amber:#d98b21;
+  --amber-soft:#f6e3c4;
+  --line:#d8cfbe;
+  --card:#fffdf8;
+  --danger:#a33b2c;
+  --radius:18px;
+  font-size:16px;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 12% 8%, #fff 0 18%, transparent 19%),
+    var(--paper);
+  color:var(--ink);
+  font-family:"Space Grotesk",system-ui,sans-serif;
+}
+
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  padding:18px clamp(18px,4vw,48px);
+  border-bottom:1px solid var(--line);
+  background:#fbf7ee;
+}
+
+.brand{display:flex;align-items:center;gap:14px}
+.brand-mark{
+  width:54px;height:54px;
+  display:grid;place-items:center;
+  background:var(--teal);
+  color:#fff;
+  border-radius:16px;
+  font-family:"Noto Nastaliq Urdu",serif;
+  font-size:26px;
+  font-weight:700;
+}
+.brand h1{margin:0;font-size:22px;letter-spacing:-.02em}
+.brand p{margin:2px 0 0;font-size:13px;color:#5d6a66}
+
+.turn-indicator{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 16px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--card);
+  font-size:14px;
+  font-weight:600;
+}
+.turn-indicator .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#8b9793;
+}
+.turn-indicator.psl .dot{background:var(--teal);box-shadow:0 0 0 5px var(--teal-soft)}
+.turn-indicator.staff .dot{background:var(--amber);box-shadow:0 0 0 5px var(--amber-soft)}
+
+.mode-switch{
+  display:flex;gap:6px;
+  padding:5px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:var(--card);
+}
+.mode-btn{
+  border:0;background:transparent;
+  padding:9px 16px;border-radius:999px;
+  font:inherit;font-weight:600;cursor:pointer;color:#5d6a66;
+}
+.mode-btn.active{background:var(--ink);color:#fff}
+
+.counter{
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);
+  gap:22px;
+  padding:22px clamp(18px,4vw,48px) 34px;
+}
+
+.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  box-shadow:0 18px 40px rgba(23,33,31,.06);
+}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px;
+  border-bottom:1px solid var(--line);
+}
+.panel-head h2{margin:0;font-size:18px}
+.privacy-note{font-size:12px;color:#6b7773}
+
+.camera-shell{
+  position:relative;
+  aspect-ratio:4/3;
+  background:#101816;
+}
+#video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+#overlay{
+  position:absolute;inset:0;width:100%;height:100%;
+  transform:scaleX(-1);
+  pointer-events:none;
+}
+.camera-hint{
+  position:absolute;inset:0;
+  display:grid;place-content:center;justify-items:center;gap:12px;
+  color:#e8e2d4;text-align:center;padding:24px;
+  background:rgba(16,24,22,.82);
+}
+.camera-hint p{max-width:300px;margin:0;font-size:14px;line-height:1.5}
+
+.recognition-ring{
+  position:absolute;right:18px;bottom:18px;
+  width:112px;height:112px;border-radius:50%;
+  display:grid;place-items:center;
+  background:rgba(253,251,244,.92);
+  border:3px solid var(--line);
+  transition:border-color .2s ease, transform .2s ease;
+}
+.recognition-ring.match{border-color:var(--teal);transform:scale(1.05)}
+.ring-inner{text-align:center;line-height:1.1}
+.ring-inner span{
+  display:block;font-size:17px;font-weight:700;
+  font-family:"Noto Nastaliq Urdu",serif;
+}
+.ring-inner small{font-size:10px;color:#6b7773}
+
+.sign-controls{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 20px;
+  border-top:1px solid var(--line);
+  flex-wrap:wrap;
+}
+.buffer-meter{
+  display:flex;align-items:center;gap:9px;
+  margin-left:auto;font-size:12px;color:#5d6a66;
+}
+.meter{
+  width:130px;height:8px;border-radius:99px;
+  background:#e8e0d0;overflow:hidden;
+}
+#bufferFill{
+  width:0%;height:100%;background:var(--amber);
+  transition:width .1s linear;
+}
+
+button{
+  font:inherit;cursor:pointer;border-radius:12px;
+  transition:.15s ease;
+}
+.primary{
+  border:0;background:var(--teal);color:#fff;
+  padding:12px 20px;font-weight:700;
+}
+.primary:hover:not(:disabled){background:#0a4a45}
+.primary:disabled{opacity:.42;cursor:not-allowed}
+.ghost{
+  border:1px solid var(--line);background:transparent;color:var(--ink);
+  padding:11px 16px;font-weight:600;
+}
+.ghost:hover{background:#f1eadb}
+
+.urdu-stage,.heard-stage{
+  padding:20px;
+  border-bottom:1px solid var(--line);
+}
+.urdu-label{
+  margin:0 0 10px;
+  font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:#6b7773;
+}
+.urdu-output{
+  min-height:112px;
+  display:flex;align-items:center;
+  padding:18px 22px;
+  border-radius:14px;
+  background:var(--teal-soft);
+  border:1px solid #b9d2ca;
+  font-family:"Noto Nastaliq Urdu",serif;
+  font-size:clamp(28px,4.5vw,46px);
+  font-weight:700;line-height:1.7;
+}
+.heard-output{
+  min-height:84px;
+  display:flex;align-items:center;
+  padding:16px 20px;
+  border-radius:14px;
+  background:var(--amber-soft);
+  border:1px solid #e4c795;
+  font-family:"Noto Nastaliq Urdu",serif;
+  font-size:clamp(22px,3vw,32px);
+  line-height:1.7;
+}
+.stage-actions{display:flex;gap:10px;margin-top:14px}
+
+.mic-btn{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--line);background:var(--card);
+  padding:10px 16px;font-weight:700;
+}
+.mic-btn.listening{
+  background:var(--amber);border-color:var(--amber);color:#fff;
+}
+.mic-btn:disabled{opacity:.45;cursor:not-allowed}
+
+.quick-replies{
+  display:flex;flex-wrap:wrap;gap:9px;
+  padding:18px 20px 22px;
+}
+.quick-replies button{
+  border:1px solid var(--line);
+  background:#fbf7ee;
+  padding:10px 14px;
+  font-family:"Noto Nastaliq Urdu",serif;
+  font-size:18px;
+}
+.quick-replies button:hover{border-color:var(--teal);color:var(--teal)}
+
+.teach-drawer,.vocab-drawer{
+  display:none;
+  margin:0 clamp(18px,4vw,48px) 28px;
+}
+.teach-drawer.open,.vocab-drawer.open{display:block}
+.teach-inner,.vocab-inner{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:22px;
+}
+.teach-inner h3,.vocab-inner h3{margin:0 0 6px}
+.teach-inner p{margin:0;color:#5d6a66;font-size:14px}
+
+#teachForm{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin-top:20px;
+}
+label{display:grid;gap:7px;font-size:13px;font-weight:600}
+input,select{
+  font:inherit;padding:12px 14px;
+  border:1px solid var(--line);border-radius:11px;background:#fff;
+}
+input[dir="rtl"]{font-family:"Noto Nastaliq Urdu",serif;font-size:20px}
+
+.teach-status{
+  display:flex;justify-content:space-between;gap:16px;
+  margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
+  font-size:14px;color:#5d6a66;
+}
+
+.vocab-head{display:flex;justify-content:space-between;align-items:center}
+.vocab-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+  gap:12px;margin-top:18px;
+}
+.vocab-card{
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  background:#fbf7ee;
+}
+.vocab-card strong{
+  display:block;font-family:"Noto Nastaliq Urdu",serif;
+  font-size:25px;margin-bottom:3px;
+}
+.vocab-card span{font-size:13px;color:#5d6a66}
+.vocab-card small{display:block;margin-top:8px;color:#7a8683}
+.vocab-empty{color:#6b7773;font-size:14px}
+
+.footer{
+  padding:18px clamp(18px,4vw,48px) 30px;
+  color:#5d6a66;font-size:13px;
+}
+
+@media(max-width:900px){
+  .counter{grid-template-columns:1fr}
+  .topbar{flex-wrap:wrap}
+  #teachForm{grid-template-columns:1fr}
+  .buffer-meter{margin-left:0;width:100%}
+}

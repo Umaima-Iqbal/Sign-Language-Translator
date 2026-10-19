@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="ur" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bol PSL — Pakistan Sign Language Counter Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">بول</div>
+      <div>
+        <h1>Bol PSL</h1>
+        <p>Pakistan Sign Language counter assistant</p>
+      </div>
+    </div>
+
+    <div class="turn-indicator" id="turnIndicator">
+      <span class="dot"></span>
+      <span id="turnText">Ready</span>
+    </div>
+
+    <nav class="mode-switch" aria-label="Mode">
+      <button class="mode-btn active" data-mode="translate">Translate</button>
+      <button class="mode-btn" data-mode="teach">Teach a sign</button>
+      <button class="mode-btn" data-mode="vocabulary">Vocabulary</button>
+    </nav>
+  </header>
+
+  <main class="counter">
+    <!-- Signer side -->
+    <section class="panel signer-panel">
+      <div class="panel-head">
+        <h2>Signer</h2>
+        <span class="privacy-note">Hand landmarks only · no video saved</span>
+      </div>
+
+      <div class="camera-shell">
+        <video id="video" playsinline muted></video>
+        <canvas id="overlay"></canvas>
+
+        <div class="camera-hint" id="cameraHint">
+          <button id="startCamera">Start camera</button>
+          <p>Allow camera access. Keep both hands visible for best results.</p>
+        </div>
+
+        <div class="recognition-ring" id="recognitionRing">
+          <div class="ring-inner">
+            <span id="liveWord">—</span>
+            <small id="liveConfidence">confidence</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="sign-controls">
+        <button id="recordSample" class="primary" disabled>Record sample</button>
+        <button id="clearBuffer" class="ghost">Clear</button>
+        <div class="buffer-meter">
+          <span>Sample</span>
+          <div class="meter"><div id="bufferFill"></div></div>
+          <span id="bufferCount">0 / 45</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Staff side -->
+    <section class="panel staff-panel">
+      <div class="panel-head">
+        <h2>Staff</h2>
+        <button id="micButton" class="mic-btn" disabled>
+          <span class="mic-icon">🎙</span> Speak
+        </button>
+      </div>
+
+      <div class="urdu-stage">
+        <p class="urdu-label">Recognized phrase</p>
+        <div class="urdu-output" id="urduOutput" dir="rtl" lang="ur">یہاں اردو ظاہر ہوگی</div>
+        <div class="stage-actions">
+          <button id="speakButton" class="primary" disabled>Speak Urdu</button>
+          <button id="clearPhrase" class="ghost">Clear phrase</button>
+        </div>
+      </div>
+
+      <div class="heard-stage">
+        <p class="urdu-label">Staff speech</p>
+        <div class="heard-output" id="heardOutput" dir="rtl" lang="ur">مائیکروفون دبائیں اور بولیں</div>
+      </div>
+
+      <div class="quick-replies" id="quickReplies">
+        <button data-urdu="جی بالکل">جی بالکل</button>
+        <button data-urdu="ایک منٹ">ایک منٹ</button>
+        <button data-urdu="مہربانی">مہربانی</button>
+        <button data-urdu="یہ قیمت ہے">یہ قیمت ہے</button>
+        <button data-urdu="دوا موجود ہے">دوا موجود ہے</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Teach panel -->
+  <section class="teach-drawer" id="teachDrawer">
+    <div class="teach-inner">
+      <div>
+        <h3>Teach Bol PSL a verified sign</h3>
+        <p>Record 5–10 clear samples from slightly different angles. Use one short, complete sign at a time.</p>
+      </div>
+
+      <form id="teachForm">
+        <label>
+          Urdu word
+          <input id="urduWord" dir="rtl" lang="ur" placeholder="مثلاً: پانی" required />
+        </label>
+        <label>
+          English meaning
+          <input id="englishWord" placeholder="e.g. water" required />
+        </label>
+        <label>
+          Category
+          <select id="wordCategory">
+            <option>Basic needs</option>
+            <option>Courtesy</option>
+            <option>Pharmacy</option>
+            <option>Shopping</option>
+            <option>Banking</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <button type="submit" class="primary">Save sign</button>
+      </form>
+
+      <div class="teach-status">
+        <p id="teachStatus">No sign selected.</p>
+        <p id="sampleStatus">0 samples recorded</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vocabulary panel -->
+  <section class="vocab-drawer" id="vocabDrawer">
+    <div class="vocab-inner">
+      <div class="vocab-head">
+        <h3>Learned vocabulary</h3>
+        <button id="closeVocab" class="ghost">Close</button>
+      </div>
+      <div id="vocabList" class="vocab-list"></div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p><strong>Bol PSL</strong> recognizes only the signs it has been taught. It is not a complete Pakistan Sign Language translator.</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
