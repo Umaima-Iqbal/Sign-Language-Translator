@@ -513,8 +513,6 @@ async function initCamera() {
     loopOn = true;
 
     recordSample.disabled = !currentSign;
-    micButton.disabled = false;
-
     setStatus("live", "Listening");
     requestAnimationFrame(loop);
   } catch (error) {
@@ -591,7 +589,7 @@ document.querySelectorAll(".tab").forEach(button => {
 teachForm.onsubmit = event => {
   event.preventDefault();
 
-  const urdu = urduWord.value.trim();
+  const urdu = englishWord.value.trim();
   const english = englishWord.value.trim();
 
   if (!urdu || !english) return;
