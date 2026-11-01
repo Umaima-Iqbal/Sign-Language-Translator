@@ -1,45 +1,24 @@
-# Sign-Language-Translator
+# Bol PSL: Sign Language to English Translator
 
-Bol PSL — Bilingual 3D Sign Counter
-Bol PSL is a browser-based Pakistan Sign Language counter assistant. It recognizes built-in quick hand gestures immediately, converts them into Urdu text and speech, and lets staff reply through Urdu speech-to-text or quick replies.
+Browser app. Camera reads hand signs, shows English text and speaks it. Staff speech is shown as English text.
 
-Run
-bash
-cd bol-psl
-python -m http.server 8000
-Open: http://localhost:8000
+## Run on computer
+    python -m http.server 8000
+Open http://localhost:8000 in Chrome or Edge.
 
-Use Chrome or Edge and allow camera access.
+## Put on phone (needs HTTPS)
+1. Upload this folder to Netlify Drop, Vercel or GitHub Pages (free). You get an https link.
+2. Open the link in Chrome on Android, menu, Install app.
+3. APK: go to pwabuilder.com, paste your https link, choose Android, download the package.
+   Use this route (it runs real Chrome inside the app). Capacitor or Cordova WebView will break speech to text.
 
-Works without setup
-The app includes eight built-in quick gestures. Hold each one steady for about one second:
+## Built in gestures (11)
+Hello (wave open palm), Yes (thumb up), No (thumb down), Wait (fist), Thank you (index and middle up),
+Help (index up), Price (thumb and index touching), Stop (open palm still), I love you, Call me, Water (three fingers).
 
-Gesture	Urdu output	English
-Gesture	Urdu output	English
-Open palm, wave left-right	ہیلو	Hello
-Thumb up	جی ہاں	Yes
-Thumb down	نہیں	No
-Closed fist	انتظار	Wait
-Index + middle finger up	شکریہ	Thank you
-Index finger pointing up	مدد	Help
-Thumb and index fingertip touching	قیمت	Price
-Open palm held still	رکیں	Stop
-These are simple, reliable hand-shape gestures for the working prototype. They are not presented as complete PSL.
+## Teach your own signs
+Teach tab, type the English meaning, Record sample 5 to 10 times, go back to Translate.
+Saved signs are checked before built in gestures. Data stays in the phone (localStorage).
 
-Teach real PSL signs
-Use Teach to add verified PSL signs:
-
-Enter the Urdu word and English meaning.
-
-Click Record PSL sample.
-
-Perform the sign once.
-
-Record 5–10 samples with small changes in angle and distance.
-
-Return to Translate.
-
-Saved PSL signs are checked before built-in quick gestures.
-
-Privacy
-The webcam stream remains in the browser. Only normalized MediaPipe hand landmarks are processed and stored locally in localStorage; no video frames are saved.
+## Limits
+Not full PSL. Only built in gestures and the signs you teach it.

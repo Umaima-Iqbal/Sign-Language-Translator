@@ -36,7 +36,6 @@ const quickReplies = document.getElementById("quickReplies");
 const teachDrawer = document.getElementById("teachDrawer");
 const guideDrawer = document.getElementById("guideDrawer");
 const teachForm = document.getElementById("teachForm");
-const urduWord = document.getElementById("urduWord");
 const englishWord = document.getElementById("englishWord");
 const wordCategory = document.getElementById("wordCategory");
 const teachStatus = document.getElementById("teachStatus");
@@ -48,7 +47,7 @@ const WINDOW_SIZE = 30;
 const HOLD_FRAMES = 16;
 const RECOGNIZE_EVERY = 3;
 const COOLDOWN_MS = 2400;
-const STORE_KEY = "bol-psl-v3";
+const STORE_KEY = "bol-psl-v4";
 
 const CONNECTIONS = [
   [0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],
@@ -57,14 +56,17 @@ const CONNECTIONS = [
 ];
 
 const BUILT_INS = [
-  { id:"hello", urdu:"ہیلو", english:"Hello", shape:"open_palm", motion:"wave", hint:"Open palm and wave left-right" },
-  { id:"yes", urdu:"جی ہاں", english:"Yes", shape:"thumbs_up", motion:"hold", hint:"Thumb up, other fingers closed" },
-  { id:"no", urdu:"نہیں", english:"No", shape:"thumbs_down", motion:"hold", hint:"Thumb down, other fingers closed" },
-  { id:"wait", urdu:"انتظار", english:"Wait", shape:"fist", motion:"hold", hint:"Closed fist" },
-  { id:"thank_you", urdu:"شکریہ", english:"Thank you", shape:"peace", motion:"hold", hint:"Index and middle finger up" },
-  { id:"help", urdu:"مدد", english:"Help", shape:"point_up", motion:"hold", hint:"Point upward with index finger" },
-  { id:"price", urdu:"قیمت", english:"Price", shape:"pinch", motion:"hold", hint:"Touch thumb and index fingertips" },
-  { id:"stop", urdu:"رکیں", english:"Stop", shape:"open_palm", motion:"still", hint:"Hold open palm still" }
+  { id:"love", urdu:"I love you", english:"I love you", shape:"love", motion:"hold", hint:"Thumb, index and pinky out; middle and ring down" },
+  { id:"call", urdu:"Call me", english:"Call me", shape:"call", motion:"hold", hint:"Thumb and pinky out like a phone" },
+  { id:"water", urdu:"Water", english:"Water", shape:"three", motion:"hold", hint:"Index, middle and ring up; pinky and thumb down" },
+  { id:"hello", urdu:"Hello", english:"Hello", shape:"open_palm", motion:"wave", hint:"Open palm and wave left-right" },
+  { id:"yes", urdu:"Yes", english:"Yes", shape:"thumbs_up", motion:"hold", hint:"Thumb up, other fingers closed" },
+  { id:"no", urdu:"No", english:"No", shape:"thumbs_down", motion:"hold", hint:"Thumb down, other fingers closed" },
+  { id:"wait", urdu:"Wait", english:"Wait", shape:"fist", motion:"hold", hint:"Closed fist" },
+  { id:"thank_you", urdu:"Thank you", english:"Thank you", shape:"peace", motion:"hold", hint:"Index and middle finger up" },
+  { id:"help", urdu:"Help", english:"Help", shape:"point_up", motion:"hold", hint:"Point upward with index finger" },
+  { id:"price", urdu:"Price", english:"Price", shape:"pinch", motion:"hold", hint:"Touch thumb and index fingertips" },
+  { id:"stop", urdu:"Stop", english:"Stop", shape:"open_palm", motion:"still", hint:"Hold open palm still" }
 ];
 
 /* ---------- State ---------- */
@@ -113,7 +115,7 @@ function setStatus(mode, text) {
 }
 
 function setUrdu(text) {
-  urduOutput.textContent = text || "یہاں اردو ظاہر ہوگی";
+  urduOutput.textContent = text || "Translation appears here";
 }
 
 function setLive(word, subtitle) {
@@ -125,7 +127,7 @@ function setLive(word, subtitle) {
 function speakUrdu(text) {
   if (!text) return;
 
-  setStatus("busy", "Speaking Urdu");
+  setStatus("busy", "Speaking");
 
   if (!("speechSynthesis" in window)) {
     setStatus("live", "Voice unavailable");
@@ -133,7 +135,7 @@ function speakUrdu(text) {
   }
 
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "ur-PK";
+  utterance.lang = "en-US";
   utterance.rate = 0.95;
   utterance.onend = () => setStatus("live", "Listening");
   utterance.onerror = () => setStatus("live", "Voice unavailable");
@@ -184,6 +186,9 @@ function handShape(lm) {
 
   if (pinch && f.middle && f.ring && f.pinky) return "pinch";
   if (count === 4 && f.thumb) return "open_palm";
+  if (f.thumb && f.index && f.pinky && !f.middle && !f.ring) return "love";
+  if (f.thumb && f.pinky && !f.index && !f.middle && !f.ring) return "call";
+  if (f.index && f.middle && f.ring && !f.pinky && !f.thumb) return "three";
 
   if (count === 0 && f.thumb) {
     return lm[4].y < lm[0].y ? "thumbs_up" : "thumbs_down";
@@ -501,6 +506,7 @@ async function initCamera() {
 
     await video.play();
 
+    document.querySelector(".camera-stage").style.aspectRatio = video.videoWidth + " / " + video.videoHeight;
     resizeOverlay();
     cameraVeil.style.display = "none";
     cameraOn = true;
@@ -657,13 +663,14 @@ function setupMicrophone() {
 
   if (!SpeechRecognitionClass) {
     micButton.disabled = true;
-    heardOutput.textContent = "اس براؤزر میں speech recognition دستیاب نہیں";
+    heardOutput.textContent = "Speech recognition is not supported in this browser. Use Chrome.";
     return;
   }
 
   const recognition = new SpeechRecognitionClass();
-  recognition.lang = "ur-PK";
+  recognition.lang = "en-US";
   recognition.interimResults = true;
+  micButton.disabled = false;
   recognition.continuous = false;
 
   recognition.onresult = event => {
@@ -677,7 +684,7 @@ function setupMicrophone() {
   };
 
   recognition.onerror = event => {
-    heardOutput.textContent = "مائیکروفون کی خرابی: " + event.error;
+    heardOutput.textContent = "Mic error: " + event.error;
     setStatus("live", "Mic error");
   };
 
@@ -693,7 +700,7 @@ function setupMicrophone() {
       return;
     }
 
-    heardOutput.textContent = "سن رہا ہوں…";
+    heardOutput.textContent = "Listening…";
     setStatus("busy", "Staff speaking");
     micButton.classList.add("listening");
     micLabel.textContent = "Stop";
@@ -709,3 +716,18 @@ function setupMicrophone() {
 startCamera.onclick = initCamera;
 setupMicrophone();
 renderGuide();
+
+/* ---------- 3D tilt (mouse only) ---------- */
+document.querySelectorAll(".glass-card").forEach(card => {
+  card.addEventListener("pointermove", e => {
+    if (e.pointerType !== "mouse") return;
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `rotateY(${x * 4}deg) rotateX(${-y * 4}deg) translateZ(10px)`;
+  });
+  card.addEventListener("pointerleave", () => { card.style.transform = ""; });
+});
+
+/* ---------- Offline / install support ---------- */
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});

@@ -1,14 +1,14 @@
 :root{
-  --bg:#0e1513;
-  --bg2:#132019;
-  --card:rgba(255,251,240,.08);
-  --card-strong:rgba(255,251,240,.13);
-  --line:rgba(233,224,201,.16);
-  --text:#f4eee0;
-  --muted:#a8b3ab;
-  --teal:#22c1a7;
+  --bg:#f3f6ff;
+  --bg2:#e9f7f4;
+  --card:rgba(255,255,255,.62);
+  --card-strong:rgba(255,255,255,.9);
+  --line:rgba(91,110,190,.16);
+  --text:#1f2a44;
+  --muted:#6b7693;
+  --teal:#10a58c;
   --teal-deep:#0b6b5d;
-  --amber:#f0b23f;
+  --amber:#f59e0b;
   --coral:#e4654a;
   --radius:26px;
 }
@@ -56,21 +56,21 @@ body{
   background:linear-gradient(145deg,rgba(255,251,240,.12),rgba(255,251,240,.04));
   border:1px solid var(--line);
   border-radius:22px;
-  box-shadow:0 24px 50px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow:0 24px 50px rgba(80,95,170,.16), inset 0 1px 0 rgba(255,255,255,.08);
   transform-style:preserve-3d;
 }
 .brand-mark{
   width:58px;height:58px;display:grid;place-items:center;
   border-radius:18px;color:#04211c;
   background:linear-gradient(145deg,#3fe0c4,#0d8f7b);
-  font-family:"Noto Nastaliq Urdu",serif;font-size:27px;font-weight:700;
+  font-family:"Sora",sans-serif;font-size:27px;font-weight:700;
   box-shadow:0 14px 28px rgba(34,193,167,.32), inset 0 1px 0 rgba(255,255,255,.45);
 }
 .brand-copy h1{
   margin:0;font-family:"Sora",sans-serif;font-size:21px;letter-spacing:-.03em;
 }
 .brand-copy h1 span{
-  display:block;font-family:"Noto Nastaliq Urdu",serif;
+  display:block;font-family:"Sora",sans-serif;
   font-size:15px;color:var(--teal);font-weight:500;
 }
 .brand-copy p{margin:3px 0 0;font-size:12px;color:var(--muted)}
@@ -78,7 +78,7 @@ body{
 .status-pill{
   display:flex;align-items:center;gap:10px;
   padding:11px 18px;border-radius:999px;
-  background:rgba(9,17,15,.65);border:1px solid var(--line);
+  background:rgba(255,255,255,.72);border:1px solid var(--line);
   font-size:13px;font-weight:600;backdrop-filter:blur(14px);
 }
 .pulse{width:9px;height:9px;border-radius:50%;background:#77837d;box-shadow:0 0 0 0 rgba(119,131,125,.5)}
@@ -86,14 +86,14 @@ body{
 .status-pill.busy .pulse{background:var(--amber);animation:pulse 1s infinite}
 @keyframes pulse{70%{box-shadow:0 0 0 11px transparent}100%{box-shadow:0 0 0 0 transparent}}
 
-.tabs{display:flex;gap:6px;padding:6px;border:1px solid var(--line);border-radius:999px;background:rgba(9,17,15,.6);backdrop-filter:blur(14px)}
+.tabs{display:flex;gap:6px;padding:6px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.72);backdrop-filter:blur(14px)}
 .tab{
   border:0;background:transparent;color:var(--muted);cursor:pointer;
   padding:9px 18px;border-radius:999px;font:inherit;font-weight:700;
   display:grid;justify-items:center;line-height:1.1;
 }
-.tab .ur{font-family:"Noto Nastaliq Urdu",serif;font-size:12px;font-weight:500}
-.tab.active{background:linear-gradient(145deg,#f4eee0,#d9d0bc);color:#12211d;box-shadow:0 10px 22px rgba(0,0,0,.25)}
+.tab .ur{font-family:"Sora",sans-serif;font-size:12px;font-weight:500}
+.tab.active{background:linear-gradient(145deg,#f4eee0,#d9d0bc);color:#12211d;box-shadow:0 10px 22px rgba(80,95,170,.16)}
 
 .stage{
   position:relative;z-index:2;
@@ -108,7 +108,7 @@ body{
   padding:20px;
   backdrop-filter:blur(22px);
   box-shadow:
-    0 40px 80px rgba(0,0,0,.35),
+    0 40px 80px rgba(80,95,170,.16),
     inset 0 1px 0 rgba(255,255,255,.09);
   transform-style:preserve-3d;
   transition:transform .25s ease;
@@ -117,7 +117,7 @@ body{
 
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
 .card-top h2{margin:0;font-family:"Sora",sans-serif;font-size:20px}
-.urdu-inline{font-family:"Noto Nastaliq Urdu",serif;font-size:15px;color:var(--teal);font-weight:500;margin-left:7px}
+.urdu-inline{font-family:"Sora",sans-serif;font-size:15px;color:var(--teal);font-weight:500;margin-left:7px}
 .muted{margin:4px 0 0;font-size:13px;color:var(--muted)}
 .privacy{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);white-space:nowrap}
 .privacy span{width:7px;height:7px;border-radius:50%;background:var(--teal)}
@@ -126,7 +126,7 @@ body{
   position:relative;border-radius:20px;overflow:hidden;
   aspect-ratio:4/3;background:#060b0a;
   border:1px solid rgba(255,255,255,.09);
-  box-shadow:inset 0 0 60px rgba(0,0,0,.55), 0 20px 45px rgba(0,0,0,.3);
+  box-shadow:inset 0 0 60px rgba(80,95,170,.16), 0 20px 45px rgba(80,95,170,.16);
 }
 #video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
 #overlay{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1);pointer-events:none}
@@ -146,33 +146,33 @@ body{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 .camera-veil h3{margin:0;font-family:"Sora",sans-serif}
-.camera-veil p{margin:0;color:var(--muted);font-family:"Noto Nastaliq Urdu",serif}
+.camera-veil p{margin:0;color:var(--muted);font-family:"Sora",sans-serif}
 
 .gesture-hud{
   position:absolute;left:18px;bottom:18px;z-index:2;
   min-width:210px;padding:14px 16px;border-radius:18px;
-  background:rgba(7,14,12,.72);border:1px solid rgba(255,255,255,.11);
+  background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.11);
   backdrop-filter:blur(16px);
-  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  box-shadow:0 18px 40px rgba(80,95,170,.16);
 }
 .hud-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .hud-word{
-  font-family:"Noto Nastaliq Urdu",serif;font-size:30px;font-weight:700;line-height:1.35;
+  font-family:"Sora",sans-serif;font-size:30px;font-weight:700;line-height:1.35;
   color:#fff;margin:2px 0;
 }
 .hud-sub{font-size:12px;color:var(--muted)}
-.hold-track{height:5px;margin-top:9px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.hold-track{height:5px;margin-top:9px;border-radius:99px;background:rgba(91,110,190,.16);overflow:hidden}
 #holdFill{width:0;height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));transition:width .08s linear}
 
 .hand-count{
   position:absolute;right:16px;top:16px;z-index:2;
   padding:7px 12px;border-radius:999px;font-size:11px;font-weight:700;
-  background:rgba(7,14,12,.68);border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.1);
 }
 
 .signer-actions{display:flex;align-items:center;gap:10px;margin-top:16px;flex-wrap:wrap}
 .sample-meter{display:flex;align-items:center;gap:8px;margin-left:auto;font-size:11px;color:var(--muted)}
-.track{width:110px;height:7px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden}
+.track{width:110px;height:7px;border-radius:99px;background:rgba(91,110,190,.16);overflow:hidden}
 #bufferFill{width:0;height:100%;background:var(--amber)}
 
 .cta{
@@ -190,7 +190,7 @@ body{
   border:1px solid var(--line);background:transparent;color:var(--text);
   cursor:pointer;font:inherit;font-weight:600;padding:10px 16px;border-radius:12px;
 }
-.quiet:hover{background:rgba(255,255,255,.07)}
+.quiet:hover{background:rgba(91,141,239,.10)}
 
 .output-block{
   border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:14px;
@@ -201,18 +201,18 @@ body{
   font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
   margin-bottom:9px;
 }
-.block-label .ur{font-family:"Noto Nastaliq Urdu",serif;text-transform:none;letter-spacing:0;font-size:13px}
+.block-label .ur{font-family:"Sora",sans-serif;text-transform:none;letter-spacing:0;font-size:13px}
 
 .urdu-screen,.staff-screen{
   min-height:104px;display:flex;align-items:center;
   padding:16px 20px;border-radius:15px;
-  font-family:"Noto Nastaliq Urdu",serif;line-height:1.75;
+  font-family:"Sora",sans-serif;line-height:1.75;
 }
 .urdu-screen{
   background:linear-gradient(145deg,rgba(34,193,167,.16),rgba(34,193,167,.05));
   border:1px solid rgba(34,193,167,.28);
   font-size:clamp(27px,3.6vw,42px);font-weight:700;
-  text-shadow:0 3px 14px rgba(0,0,0,.3);
+  text-shadow:0 3px 14px rgba(80,95,170,.16);
 }
 .staff-screen{
   background:linear-gradient(145deg,rgba(240,178,63,.14),rgba(240,178,63,.04));
@@ -223,7 +223,7 @@ body{
 
 .mic{
   display:flex;align-items:center;gap:8px;cursor:pointer;
-  border:1px solid var(--line);background:rgba(9,17,15,.55);color:var(--text);
+  border:1px solid var(--line);background:rgba(255,255,255,.72);color:var(--text);
   padding:10px 16px;border-radius:999px;font:inherit;font-weight:700;
 }
 .mic.listening{background:linear-gradient(145deg,var(--amber),#c9821d);color:#231503;border-color:transparent}
@@ -232,9 +232,9 @@ body{
 .quick-replies{margin-top:4px}
 .reply-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .reply-grid button{
-  border:1px solid var(--line);background:rgba(9,17,15,.5);color:var(--text);
-  cursor:pointer;font:inherit;padding:11px 13px;border-radius:14px;text-align:right;
-  font-family:"Noto Nastaliq Urdu",serif;font-size:18px;line-height:1.5;
+  border:1px solid var(--line);background:rgba(255,255,255,.72);color:var(--text);
+  cursor:pointer;font:inherit;padding:11px 13px;border-radius:14px;text-align:left;
+  font-family:"Sora",sans-serif;font-size:14px;line-height:1.5;
   transition:.15s ease;
 }
 .reply-grid button small{
@@ -249,21 +249,21 @@ body{
 .drawer-card{
   background:linear-gradient(160deg,var(--card-strong),var(--card));
   border:1px solid var(--line);border-radius:var(--radius);padding:22px;
-  backdrop-filter:blur(22px);box-shadow:0 35px 70px rgba(0,0,0,.32);
+  backdrop-filter:blur(22px);box-shadow:0 35px 70px rgba(80,95,170,.16);
 }
 .drawer-head h3{margin:0;font-family:"Sora",sans-serif}
 .drawer-head p{margin:6px 0 0;color:var(--muted);font-size:13px}
 
 #teachForm{
-  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:20px;
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:20px;
 }
 label{display:grid;gap:7px;font-size:12px;font-weight:700;color:var(--muted)}
 input,select{
   font:inherit;color:var(--text);padding:12px 14px;border-radius:13px;
-  background:rgba(6,12,10,.6);border:1px solid var(--line);outline:none;
+  background:rgba(255,255,255,.95);border:1px solid var(--line);outline:none;
 }
 input:focus,select:focus{border-color:var(--teal)}
-input[dir="rtl"]{font-family:"Noto Nastaliq Urdu",serif;font-size:20px}
+input[dir="rtl"]{font-family:"Sora",sans-serif;font-size:20px}
 .teach-meta{
   display:flex;justify-content:space-between;gap:14px;margin-top:16px;
   padding-top:14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);
@@ -275,9 +275,9 @@ input[dir="rtl"]{font-family:"Noto Nastaliq Urdu",serif;font-size:20px}
 }
 .gesture-item{
   border:1px solid var(--line);border-radius:18px;padding:15px;
-  background:rgba(9,17,15,.45);
+  background:rgba(255,255,255,.72);
 }
-.gesture-item b{font-family:"Noto Nastaliq Urdu",serif;font-size:23px;display:block}
+.gesture-item b{font-family:"Sora",sans-serif;font-size:23px;display:block}
 .gesture-item span{font-size:13px;color:var(--teal);font-weight:700}
 .gesture-item small{display:block;margin-top:7px;color:var(--muted);font-size:12px;line-height:1.45}
 
@@ -289,3 +289,44 @@ footer{position:relative;z-index:2;margin-top:26px;color:var(--muted);font-size:
   .reply-grid{grid-template-columns:1fr}
   .topbar{justify-content:center}
 }
+
+.glass-card{will-change:transform}
+@media(max-width:600px){
+  .tabs{width:100%;justify-content:center}
+  .gesture-hud{min-width:0;left:10px;bottom:10px;padding:10px 12px}
+  .hud-word{font-size:22px}
+  .signer-actions{gap:8px}
+  .sample-meter{margin-left:0;width:100%}
+}
+
+/* ===== Light pastel theme ===== */
+body{background:
+  radial-gradient(900px 520px at 5% 0%,rgba(255,196,224,.55),transparent 60%),
+  radial-gradient(800px 600px at 95% 10%,rgba(166,200,255,.6),transparent 60%),
+  radial-gradient(900px 600px at 50% 105%,rgba(160,240,215,.55),transparent 60%),
+  linear-gradient(160deg,#f7f4ff,#eef8f5)}
+.room-grid{opacity:.5;background-image:linear-gradient(rgba(91,110,190,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(91,110,190,.07) 1px,transparent 1px)}
+.room-glow{background:radial-gradient(closest-side,rgba(130,170,255,.28),transparent)}
+.brand-card,.glass-card,.drawer-card{background:linear-gradient(160deg,rgba(255,255,255,.92),rgba(255,255,255,.6));box-shadow:0 30px 60px rgba(90,105,180,.16),inset 0 1px 0 #fff}
+.brand-mark{color:#fff;background:linear-gradient(145deg,#34d3b5,#5b8def);box-shadow:0 14px 28px rgba(91,141,239,.35),inset 0 1px 0 rgba(255,255,255,.6)}
+.brand-copy h1,.card-top h2{color:#1f2a44}
+.tab.active{background:linear-gradient(145deg,#34d3b5,#5b8def);color:#fff;box-shadow:0 10px 22px rgba(91,141,239,.35)}
+.cta{color:#fff;background:linear-gradient(145deg,#34d3b5,#5b8def);box-shadow:0 14px 28px rgba(91,141,239,.28),inset 0 1px 0 rgba(255,255,255,.5)}
+.camera-stage{background:linear-gradient(145deg,#dfe9ff,#d9f5ec);border:1px solid #fff;box-shadow:inset 0 0 40px rgba(91,110,190,.12),0 20px 40px rgba(90,105,180,.18)}
+.camera-veil{background:radial-gradient(circle at 50% 40%,rgba(255,255,255,.7),rgba(226,236,255,.95))}
+.camera-veil h3{color:#1f2a44}
+.veil-orb{background:conic-gradient(from 140deg,#34d3b5,#ffb3d1,#5b8def,#34d3b5);box-shadow:0 14px 34px rgba(91,141,239,.35)}
+.hud-word{color:#1f2a44}
+.gesture-hud,.hand-count{border:1px solid rgba(91,110,190,.16);box-shadow:0 14px 30px rgba(90,105,180,.18);color:#1f2a44}
+.urdu-screen{background:linear-gradient(145deg,rgba(52,211,181,.22),rgba(91,141,239,.12));border-color:rgba(52,211,181,.4);text-shadow:none;color:#12324a}
+.staff-screen{background:linear-gradient(145deg,rgba(255,196,120,.3),rgba(255,179,209,.2));border-color:rgba(245,158,11,.3);color:#4a3210}
+.output-block,.gesture-item{background:linear-gradient(160deg,rgba(255,255,255,.8),rgba(255,255,255,.4))}
+.reply-grid button{box-shadow:0 6px 14px rgba(90,105,180,.1)}
+.reply-grid button:hover{border-color:#5b8def;box-shadow:0 12px 22px rgba(91,141,239,.2)}
+.status-pill,.tabs,.mic{box-shadow:0 8px 20px rgba(90,105,180,.12)}
+.status-pill.live .pulse{background:#10a58c}
+input,select{background:#fff;box-shadow:inset 0 1px 3px rgba(90,105,180,.1)}
+input:focus,select:focus{border-color:#5b8def;box-shadow:0 0 0 3px rgba(91,141,239,.18)}
+.quiet{background:rgba(255,255,255,.7)}
+#bufferFill,#holdFill{background:linear-gradient(90deg,#34d3b5,#5b8def)}
+.urdu-screen{font-size:clamp(22px,2.8vw,32px);line-height:1.4}
