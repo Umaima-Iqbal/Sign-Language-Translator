@@ -1,16 +1,60 @@
-let FilesetResolver, HandLandmarker;
+let FilesetResolver, HandLandmarker, mpBase = "";
 
-try {
-  ({ FilesetResolver, HandLandmarker } = await import(
-    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs"
-  ));
-} catch (error) {
-  console.error("MediaPipe import failed:", error);
-  document.getElementById("statusText").textContent =
-    "MediaPipe could not load. Check internet connection.";
+const MP_SOURCES = [
+  "./mediapipe",
+  "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14",
+  "https://unpkg.com/@mediapipe/tasks-vision@0.10.14"
+];
+const MODEL_SOURCES = [
+  "models/hand_landmarker.task",
+  "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
+];
+
+function withTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(label + " timed out")), ms))
+  ]);
 }
 
-/* ---------- DOM ---------- */
+async function loadMediaPipe() {
+  if (FilesetResolver && HandLandmarker) return;
+  let lastError;
+  for (const base of MP_SOURCES) {
+    try {
+      const mod = await withTimeout(import(base + "/vision_bundle.mjs"), 25000, "MediaPipe download");
+      ({ FilesetResolver, HandLandmarker } = mod);
+      mpBase = base;
+      return;
+    } catch (error) {
+      lastError = error;
+      console.error("MediaPipe source failed:", base, error);
+    }
+  }
+  throw lastError;
+}
+
+async function createLandmarker() {
+  const files = await withTimeout(FilesetResolver.forVisionTasks(mpBase + "/wasm"), 25000, "Wasm download");
+  let lastError;
+  for (const path of MODEL_SOURCES) {
+    for (const delegate of ["GPU", "CPU"]) {
+      try {
+        landmarker = await withTimeout(HandLandmarker.createFromOptions(files, {
+          baseOptions: { modelAssetPath: path, delegate },
+          runningMode: "VIDEO",
+          numHands: 2
+        }), 40000, "Hand model download");
+        return;
+      } catch (error) {
+        lastError = error;
+        console.error("Model failed:", path, delegate, error);
+      }
+    }
+  }
+  throw lastError;
+}
+
 const video = document.getElementById("video");
 const overlay = document.getElementById("overlay");
 const ctx = overlay.getContext("2d");
@@ -460,67 +504,51 @@ function accept(word, confidence, source) {
 
 /* ---------- Camera ---------- */
 async function initCamera() {
-  if (!FilesetResolver || !HandLandmarker) {
-    setStatus("", "MediaPipe is not loaded");
-    return;
-  }
-
   startCamera.disabled = true;
-  startCamera.textContent = "Loading…";
+  startCamera.textContent = "Starting…";
 
+  /* 1) Camera first, so it shows immediately */
   try {
-    const files = await FilesetResolver.forVisionTasks(
-      "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
-    );
-
-    const model = {
-      modelAssetPath:
-        "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
-    };
-
-    try {
-      landmarker = await HandLandmarker.createFromOptions(files, {
-        baseOptions: { ...model, delegate: "GPU" },
-        runningMode: "VIDEO",
-        numHands: 2
-      });
-    } catch {
-      landmarker = await HandLandmarker.createFromOptions(files, {
-        baseOptions: { ...model, delegate: "CPU" },
-        runningMode: "VIDEO",
-        numHands: 2
-      });
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      throw new Error("Open this page via http://localhost or https (not by double-clicking the file)");
     }
-
     const stream = await navigator.mediaDevices.getUserMedia({
       video: { width:{ideal:960}, height:{ideal:720}, facingMode:"user" },
       audio: false
     });
-
     video.srcObject = stream;
-
     await new Promise(resolve => {
       if (video.readyState >= 2) resolve();
       else video.onloadeddata = resolve;
     });
-
     await video.play();
-
     document.querySelector(".camera-stage").style.aspectRatio = video.videoWidth + " / " + video.videoHeight;
     resizeOverlay();
     cameraVeil.style.display = "none";
     cameraOn = true;
-    loopOn = true;
-
-    recordSample.disabled = !currentSign;
-    setStatus("live", "Listening");
-    requestAnimationFrame(loop);
   } catch (error) {
     console.error(error);
     startCamera.disabled = false;
     startCamera.textContent = "Try again";
     setStatus("", "Camera error: " + error.message);
+    return;
   }
+
+  /* 2) Hand model in the background */
+  setStatus("busy", "Loading hand model… (first time can take a while)");
+  try {
+    await loadMediaPipe();
+    await createLandmarker();
+  } catch (error) {
+    console.error(error);
+    setStatus("", "Camera on, but hand model failed: " + error.message);
+    return;
+  }
+
+  loopOn = true;
+  recordSample.disabled = !currentSign;
+  setStatus("live", "Listening");
+  requestAnimationFrame(loop);
 }
 
 /* ---------- Teaching ---------- */
