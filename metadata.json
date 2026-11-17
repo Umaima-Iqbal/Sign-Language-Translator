@@ -1,0 +1,6 @@
+{
+  "name": "Bol PSL",
+  "description": "Two-way real-time sign language translation, remote voice-to-sign communication, custom sign training, and live session analytics.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

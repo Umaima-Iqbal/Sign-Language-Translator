@@ -1,0 +1,304 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Boot connection check document
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // Global hardened primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isVerifiedUser() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidRoomCode(code) {
+      return code is string && code.size() >= 3 && code.size() <= 32 && code.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Entity validation helpers
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll(['uid', 'displayName', 'preferredRole', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'displayName', 'preferredRole', 'createdAt', 'updatedAt'])
+        && data.uid == userId
+        && isValidId(data.uid)
+        && data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80
+        && data.preferredRole in ['signer', 'speaker']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidUserPrivateInfo(data, userId) {
+      return data.keys().hasAll(['uid', 'email', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'email', 'photoUrl', 'updatedAt'])
+        && data.uid == userId
+        && isValidId(data.uid)
+        && data.email is string && data.email.size() >= 3 && data.email.size() <= 160
+        && (!('photoUrl' in data) || (data.photoUrl is string && data.photoUrl.size() <= 500))
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidCustomSign(data, userId, signId) {
+      return data.keys().hasAll(['id', 'ownerId', 'meaning', 'category', 'sampleCount', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'meaning', 'urduLabel', 'category', 'sampleCount', 'createdAt', 'updatedAt'])
+        && data.id == signId
+        && data.ownerId == userId
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && data.meaning is string && data.meaning.size() >= 1 && data.meaning.size() <= 80
+        && (!('urduLabel' in data) || (data.urduLabel is string && data.urduLabel.size() <= 80))
+        && data.category is string && data.category.size() >= 1 && data.category.size() <= 40
+        && data.sampleCount is int && data.sampleCount >= 0 && data.sampleCount <= 15
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidCustomSignSample(data, userId, signId, sampleId) {
+      return data.keys().hasAll(['id', 'ownerId', 'signId', 'frameCount', 'flatFeatures', 'createdAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'signId', 'frameCount', 'flatFeatures', 'createdAt'])
+        && data.id == sampleId
+        && data.ownerId == userId
+        && data.signId == signId
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidId(data.signId)
+        && data.frameCount is int && data.frameCount >= 5 && data.frameCount <= 30
+        && data.flatFeatures is list
+        && data.flatFeatures.size() >= 63 && data.flatFeatures.size() <= 1900
+        && data.flatFeatures[0] is number
+        && data.createdAt is timestamp;
+    }
+
+    function isValidSession(data, userId, sessionId) {
+      return data.keys().hasAll(['id', 'ownerId', 'roomCode', 'role', 'status', 'signCount', 'speechCount', 'avgConfidence', 'avgLatencyMs', 'startedAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'roomCode', 'role', 'status', 'signCount', 'speechCount', 'avgConfidence', 'avgLatencyMs', 'topSign', 'startedAt', 'updatedAt'])
+        && data.id == sessionId
+        && data.ownerId == userId
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidRoomCode(data.roomCode)
+        && data.role in ['signer', 'speaker']
+        && data.status in ['active', 'completed']
+        && data.signCount is int && data.signCount >= 0 && data.signCount <= 100000
+        && data.speechCount is int && data.speechCount >= 0 && data.speechCount <= 100000
+        && data.avgConfidence is number && data.avgConfidence >= 0 && data.avgConfidence <= 1
+        && data.avgLatencyMs is number && data.avgLatencyMs >= 0 && data.avgLatencyMs <= 60000
+        && (!('topSign' in data) || (data.topSign is string && data.topSign.size() <= 80))
+        && data.startedAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAnalyticsEvent(data, userId, eventId) {
+      return data.keys().hasAll(['id', 'ownerId', 'sessionId', 'eventType', 'label', 'source', 'confidence', 'latencyMs', 'createdAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'sessionId', 'eventType', 'label', 'source', 'confidence', 'latencyMs', 'createdAt'])
+        && data.id == eventId
+        && data.ownerId == userId
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidId(data.sessionId)
+        && data.eventType in ['sign_recognized', 'speech_sent', 'quick_reply']
+        && data.label is string && data.label.size() >= 1 && data.label.size() <= 80
+        && data.source in ['builtin', 'trained', 'speech']
+        && data.confidence is number && data.confidence >= 0 && data.confidence <= 1
+        && data.latencyMs is number && data.latencyMs >= 0 && data.latencyMs <= 60000
+        && data.createdAt is timestamp;
+    }
+
+    function isValidRoom(data, roomId) {
+      return data.keys().hasAll(['id', 'roomCode', 'hostUid', 'hostName', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'roomCode', 'hostUid', 'hostName', 'status', 'createdAt', 'updatedAt'])
+        && data.id == roomId
+        && data.roomCode == roomId
+        && isValidRoomCode(data.id)
+        && isValidId(data.hostUid)
+        && data.hostName is string && data.hostName.size() >= 1 && data.hostName.size() <= 80
+        && data.status in ['active', 'ended']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidParticipant(data, participantId) {
+      return data.keys().hasAll(['id', 'uid', 'displayName', 'role', 'joinedAt'])
+        && data.keys().hasOnly(['id', 'uid', 'displayName', 'role', 'joinedAt'])
+        && data.id == participantId
+        && isValidId(data.id)
+        && isValidId(data.uid)
+        && data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80
+        && data.role in ['signer', 'speaker']
+        && data.joinedAt is timestamp;
+    }
+
+    // User profile (non-PII) & isolated PII
+    match /users/{userId} {
+      allow get: if isValidId(userId) && isOwner(userId);
+      allow create: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming(), userId)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'preferredRole', 'updatedAt']);
+
+      match /private/{docId} {
+        allow get: if isValidId(userId) && isValidId(docId) && docId == 'info' && isOwner(userId);
+        allow create: if isValidId(userId)
+          && isValidId(docId)
+          && docId == 'info'
+          && isOwner(userId)
+          && isValidUserPrivateInfo(incoming(), userId)
+          && incoming().updatedAt == request.time;
+        allow update: if isValidId(userId)
+          && isValidId(docId)
+          && docId == 'info'
+          && isOwner(userId)
+          && isValidUserPrivateInfo(incoming(), userId)
+          && incoming().uid == existing().uid
+          && incoming().updatedAt == request.time
+          && incoming().diff(existing()).affectedKeys().hasOnly(['email', 'photoUrl', 'updatedAt']);
+      }
+
+      // Custom trained signs
+      match /customSigns/{signId} {
+        allow get: if isValidId(userId) && isValidId(signId) && isOwner(userId);
+        allow list: if isOwner(userId) && resource.data.ownerId == request.auth.uid;
+        allow create: if isValidId(userId)
+          && isValidId(signId)
+          && isOwner(userId)
+          && isValidCustomSign(incoming(), userId, signId)
+          && incoming().createdAt == request.time
+          && incoming().updatedAt == request.time;
+        allow update: if isValidId(userId)
+          && isValidId(signId)
+          && isOwner(userId)
+          && isValidCustomSign(incoming(), userId, signId)
+          && incoming().id == existing().id
+          && incoming().ownerId == existing().ownerId
+          && incoming().createdAt == existing().createdAt
+          && incoming().updatedAt == request.time
+          && incoming().diff(existing()).affectedKeys().hasOnly(['meaning', 'urduLabel', 'category', 'sampleCount', 'updatedAt']);
+        allow delete: if isValidId(userId) && isValidId(signId) && isOwner(userId);
+
+        match /samples/{sampleId} {
+          allow get: if isValidId(userId) && isValidId(signId) && isValidId(sampleId) && isOwner(userId);
+          allow list: if isOwner(userId) && resource.data.ownerId == request.auth.uid;
+          allow create: if isValidId(userId)
+            && isValidId(signId)
+            && isValidId(sampleId)
+            && isOwner(userId)
+            && isValidCustomSignSample(incoming(), userId, signId, sampleId)
+            && incoming().createdAt == request.time
+            && exists(/databases/$(database)/documents/users/$(userId)/customSigns/$(signId))
+            && get(/databases/$(database)/documents/users/$(userId)/customSigns/$(signId)).data.ownerId == request.auth.uid;
+          allow delete: if isValidId(userId) && isValidId(signId) && isValidId(sampleId) && isOwner(userId);
+        }
+      }
+
+      // Analytics sessions (with terminal state lock)
+      match /sessions/{sessionId} {
+        allow get: if isValidId(userId) && isValidId(sessionId) && isOwner(userId);
+        allow list: if isOwner(userId) && resource.data.ownerId == request.auth.uid;
+        allow create: if isValidId(userId)
+          && isValidId(sessionId)
+          && isOwner(userId)
+          && isValidSession(incoming(), userId, sessionId)
+          && incoming().status == 'active'
+          && incoming().startedAt == request.time
+          && incoming().updatedAt == request.time;
+        allow update: if isValidId(userId)
+          && isValidId(sessionId)
+          && isOwner(userId)
+          && existing().status != 'completed'
+          && isValidSession(incoming(), userId, sessionId)
+          && incoming().id == existing().id
+          && incoming().ownerId == existing().ownerId
+          && incoming().roomCode == existing().roomCode
+          && incoming().startedAt == existing().startedAt
+          && incoming().updatedAt == request.time
+          && incoming().diff(existing()).affectedKeys().hasOnly(['role', 'status', 'signCount', 'speechCount', 'avgConfidence', 'avgLatencyMs', 'topSign', 'updatedAt']);
+      }
+
+      // Granular analytics events
+      match /analyticsEvents/{eventId} {
+        allow get: if isValidId(userId) && isValidId(eventId) && isOwner(userId);
+        allow list: if isOwner(userId) && resource.data.ownerId == request.auth.uid;
+        allow create: if isValidId(userId)
+          && isValidId(eventId)
+          && isOwner(userId)
+          && isValidAnalyticsEvent(incoming(), userId, eventId)
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/users/$(userId)/sessions/$(incoming().sessionId))
+          && get(/databases/$(database)/documents/users/$(userId)/sessions/$(incoming().sessionId)).data.ownerId == request.auth.uid;
+      }
+    }
+
+    // Remote two-way rooms (no PII stored here)
+    match /rooms/{roomId} {
+      allow get: if isVerifiedUser() && isValidRoomCode(roomId);
+      allow list: if isVerifiedUser() && resource.data.hostUid == request.auth.uid;
+      allow create: if isVerifiedUser()
+        && isValidRoomCode(roomId)
+        && isValidRoom(incoming(), roomId)
+        && incoming().hostUid == request.auth.uid
+        && incoming().status == 'active'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isVerifiedUser()
+        && isValidRoomCode(roomId)
+        && existing().hostUid == request.auth.uid
+        && existing().status != 'ended'
+        && isValidRoom(incoming(), roomId)
+        && incoming().id == existing().id
+        && incoming().roomCode == existing().roomCode
+        && incoming().hostUid == existing().hostUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']);
+
+      match /participants/{participantId} {
+        allow get: if isVerifiedUser() && isValidRoomCode(roomId) && isValidId(participantId);
+        allow list: if isVerifiedUser() && resource.data.uid == request.auth.uid;
+        allow create: if isVerifiedUser()
+          && isValidRoomCode(roomId)
+          && isValidId(participantId)
+          && isValidParticipant(incoming(), participantId)
+          && incoming().uid == request.auth.uid
+          && incoming().joinedAt == request.time
+          && exists(/databases/$(database)/documents/rooms/$(roomId))
+          && get(/databases/$(database)/documents/rooms/$(roomId)).data.status == 'active';
+        allow delete: if isVerifiedUser()
+          && isValidRoomCode(roomId)
+          && isValidId(participantId)
+          && existing().uid == request.auth.uid;
+      }
+    }
+  }
+}

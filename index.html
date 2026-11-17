@@ -1,203 +1,26 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bol PSL — Sign Language Translator</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#070b1a" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="stylesheet" href="styles.css?v=3" />
-</head>
-<body>
-  <div class="room">
-    <div class="room-glow"></div>
-    <div class="room-grid"></div>
-
-    <header class="topbar">
-      <div class="brand-card">
-        <div class="brand-mark">B</div>
-        <div class="brand-copy">
-          <h1>Bol PSL</h1>
-          <p>Sign language to English, both ways</p>
-        </div>
-      </div>
-
-      <div class="status-pill" id="statusPill">
-        <span class="pulse"></span>
-        <span id="statusText">Camera off</span>
-      </div>
-
-      <nav class="tabs">
-        <button class="tab active" data-mode="translate">
-          <span class="en">Translate</span>
-        </button>
-        <button class="tab" data-mode="teach">
-          <span class="en">Teach</span>
-        </button>
-        <button class="tab" data-mode="guide">
-          <span class="en">Gestures</span>
-        </button>
-      </nav>
-    </header>
-
-    <section class="hero">
-      <div class="hero-copy">
-        <span class="eyebrow"><i></i> Live &bull; On-device &bull; Private</span>
-        <h2>Sign language,<br><em>spoken</em> instantly.</h2>
-        <p>Show a sign to the camera and the counter staff reads and hears it in English. Staff reply by voice or tap.</p>
-        <div class="hero-chips"><span>11 built-in gestures</span><span>Teach your own</span><span>Works offline</span></div>
-      </div>
-      <div class="hero-3d" aria-hidden="true">
-        <div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div>
-        <div class="orb3d">&#129311;</div>
-      </div>
-    </section>
-
-    <main class="stage">
-      <!-- Signer -->
-      <section class="glass-card signer-card">
-        <div class="card-top">
-          <div>
-            <h2>Signer</h2>
-            <p class="muted">Show a quick gesture or your saved PSL sign.</p>
-          </div>
-          <div class="privacy">
-            <span></span> Landmarks only
-          </div>
-        </div>
-
-        <div class="camera-stage">
-          <video id="video" playsinline muted></video>
-          <canvas id="overlay"></canvas>
-
-          <div class="camera-veil" id="cameraVeil">
-            <div class="veil-orb"></div>
-            <h3>Start the camera</h3>
-            
-            <button id="startCamera" class="cta">Start camera</button>
-          </div>
-
-          <div class="gesture-hud">
-            <div class="hud-label">Detected</div>
-            <div class="hud-word" id="liveWord">—</div>
-            <div class="hud-sub" id="liveConfidence">Waiting for a hand</div>
-            <div class="hold-track"><div id="holdFill"></div></div>
-          </div>
-
-          <div class="hand-count" id="handCount">0 hands</div>
-        </div>
-
-        <div class="signer-actions">
-          <button id="recordSample" class="cta small" disabled>Record PSL sample</button>
-          <button id="clearBuffer" class="quiet small">Clear</button>
-          <div class="sample-meter">
-            <span>Sample</span>
-            <div class="track"><div id="bufferFill"></div></div>
-            <b id="bufferCount">0/30</b>
-          </div>
-        </div>
-      </section>
-
-      <!-- Staff -->
-      <section class="glass-card staff-card">
-        <div class="card-top">
-          <div>
-            <h2>Staff</h2>
-            <p class="muted">English text and voice for the counter.</p>
-          </div>
-          <button id="micButton" class="mic" disabled>
-            <span>🎙</span><span id="micLabel">Speak</span>
-          </button>
-        </div>
-
-        <div class="output-block psl-block">
-          <div class="block-label">
-            <span>Recognized message</span>
-          </div>
-          <div class="urdu-screen" id="urduOutput" dir="ltr" lang="en">
-            Translation appears here
-          </div>
-          <div class="block-actions">
-            <button id="speakButton" class="cta small" disabled>Speak</button>
-            <button id="clearPhrase" class="quiet small">Clear</button>
-          </div>
-        </div>
-
-        <div class="output-block staff-block">
-          <div class="block-label">
-            <span>Staff speech</span>
-          </div>
-          <div class="staff-screen" id="heardOutput" dir="ltr" lang="en">
-            Press the mic and speak
-          </div>
-        </div>
-
-        <div class="quick-replies">
-          <div class="block-label"><span>Quick replies</span></div>
-          <div class="reply-grid" id="quickReplies">
-            <button data-urdu="Yes, certainly">Yes, certainly</button>
-            <button data-urdu="One moment">One moment</button>
-            <button data-urdu="Please">Please</button>
-            <button data-urdu="This is the price">This is the price</button>
-            <button data-urdu="Medicine is available">Medicine is available</button>
-            <button data-urdu="Can I help you?">Can I help you?</button>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- Teach -->
-    <section class="drawer" id="teachDrawer">
-      <div class="drawer-card">
-        <div class="drawer-head">
-          <div>
-            <h3>Teach a verified PSL sign</h3>
-            <p>Record 5–10 clear samples. These saved signs are checked before built-in quick gestures.</p>
-          </div>
-        </div>
-
-        <form id="teachForm">
-          <label>Sign meaning (English) <input id="englishWord" placeholder="e.g. water" required></label>
-          <label>Category
-            <select id="wordCategory">
-              <option>Basic needs</option><option>Courtesy</option><option>Pharmacy</option>
-              <option>Shopping</option><option>Banking</option><option>Other</option>
-            </select>
-          </label>
-          <button class="cta" type="submit">Save sign</button>
-        </form>
-
-        <div class="teach-meta">
-          <span id="teachStatus">No sign selected</span>
-          <span id="sampleStatus">0 samples recorded</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- Gesture guide -->
-    <section class="drawer" id="guideDrawer">
-      <div class="drawer-card">
-        <div class="drawer-head">
-          <div>
-            <h3>Built-in quick gestures</h3>
-            <p>Hold each gesture steady for about one second. These are simple hand-shape gestures for the demo, not complete PSL.</p>
-          </div>
-        </div>
-
-        <div class="gesture-grid" id="gestureGuide"></div>
-      </div>
-    </section>
-
-    <footer>
-      <p><strong>Bol PSL</strong> recognizes built-in quick gestures and only the PSL signs you have taught. It is not a complete Pakistan Sign Language translator.</p>
-    </footer>
-  </div>
-
-  <script type="module" src="app.js?v=3"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0369a1" />
+    <title>SignBridge — Two-Way Sign Language &amp; Voice Bridge</title>
+    <meta name="description" content="Two-way real-time sign language translation, remote voice-to-sign communication, custom sign training, and live session analytics." />
+    <meta property="og:title" content="SignBridge — Two-Way Sign Language &amp; Voice Bridge" />
+    <meta property="og:description" content="Two-way real-time sign language translation, remote voice-to-sign communication, custom sign training, and live session analytics." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/jpeg" href="/src/assets/images/signbridge_logo_1794817134888.jpg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="text-slate-900 antialiased selection:bg-sky-200/70 selection:text-sky-950">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
+

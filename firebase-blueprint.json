@@ -1,0 +1,158 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Non-PII user profile storing display name and default communication role.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "preferredRole": { "type": "string", "enum": ["signer", "speaker"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "preferredRole", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII record containing verified email and avatar URL.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "photoUrl": { "type": "string", "minLength": 0, "maxLength": 500 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "updatedAt"]
+    },
+    "CustomSign": {
+      "title": "CustomSign",
+      "description": "User-trained sign language gesture definition.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "meaning": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "urduLabel": { "type": "string", "minLength": 0, "maxLength": 80 },
+        "category": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "sampleCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "meaning", "category", "sampleCount", "createdAt", "updatedAt"]
+    },
+    "CustomSignSample": {
+      "title": "CustomSignSample",
+      "description": "Recorded 3D hand-landmark sequence sample belonging to a custom sign.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "signId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "frameCount": { "type": "integer" },
+        "flatFeatures": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "signId", "frameCount", "flatFeatures", "createdAt"]
+    },
+    "TranslationSession": {
+      "title": "TranslationSession",
+      "description": "Session telemetry summary for real-time analytics.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "roomCode": { "type": "string", "minLength": 3, "maxLength": 32, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "role": { "type": "string", "enum": ["signer", "speaker"] },
+        "status": { "type": "string", "enum": ["active", "completed"] },
+        "signCount": { "type": "integer" },
+        "speechCount": { "type": "integer" },
+        "avgConfidence": { "type": "number" },
+        "avgLatencyMs": { "type": "number" },
+        "topSign": { "type": "string", "minLength": 0, "maxLength": 80 },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "roomCode", "role", "status", "signCount", "speechCount", "avgConfidence", "avgLatencyMs", "startedAt", "updatedAt"]
+    },
+    "AnalyticsEvent": {
+      "title": "AnalyticsEvent",
+      "description": "Individual sign recognition or spoken translation event for live analytics.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "sessionId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "eventType": { "type": "string", "enum": ["sign_recognized", "speech_sent", "quick_reply"] },
+        "label": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "source": { "type": "string", "enum": ["builtin", "trained", "speech"] },
+        "confidence": { "type": "number" },
+        "latencyMs": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "sessionId", "eventType", "label", "source", "confidence", "latencyMs", "createdAt"]
+    },
+    "CommunicationRoom": {
+      "title": "CommunicationRoom",
+      "description": "Remote two-way communication room metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 3, "maxLength": 32, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "roomCode": { "type": "string", "minLength": 3, "maxLength": 32, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "hostUid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "hostName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "status": { "type": "string", "enum": ["active", "ended"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "roomCode", "hostUid", "hostName", "status", "createdAt", "updatedAt"]
+    },
+    "RoomParticipant": {
+      "title": "RoomParticipant",
+      "description": "Non-PII participant presence record inside a room.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "role": { "type": "string", "enum": ["signer", "speaker"] },
+        "joinedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "displayName", "role", "joinedAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Non-PII user profile and role preference."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateInfo" },
+      "description": "Owner-only isolated PII document."
+    },
+    "/users/{userId}/customSigns/{signId}": {
+      "schema": { "$ref": "#/entities/CustomSign" },
+      "description": "Trained custom sign language definitions owned by a user."
+    },
+    "/users/{userId}/customSigns/{signId}/samples/{sampleId}": {
+      "schema": { "$ref": "#/entities/CustomSignSample" },
+      "description": "Recorded landmark feature samples for a custom sign."
+    },
+    "/users/{userId}/sessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/TranslationSession" },
+      "description": "Translation and communication session records."
+    },
+    "/users/{userId}/analyticsEvents/{eventId}": {
+      "schema": { "$ref": "#/entities/AnalyticsEvent" },
+      "description": "Real-time translation and latency events."
+    },
+    "/rooms/{roomId}": {
+      "schema": { "$ref": "#/entities/CommunicationRoom" },
+      "description": "Remote communication room registry."
+    },
+    "/rooms/{roomId}/participants/{participantId}": {
+      "schema": { "$ref": "#/entities/RoomParticipant" },
+      "description": "Participants joined to a communication room."
+    }
+  }
+}
