@@ -2,7 +2,6 @@
 
 ## GitHub Repository Description & Topics
 
-**Short Repository Description (paste into GitHub About):**
 > Real-time two-way sign language translation and remote voice communication studio powered by MediaPipe 21-point hand tracking, DTW custom sign training, WebRTC/WebSockets, and Firebase analytics.
 
 **Suggested GitHub Topics:**
